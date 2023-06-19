@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Notes
 {
@@ -20,32 +21,34 @@ namespace Notes
         }
 
         private void Save_Click(object sender, EventArgs e)
-        {   
-            // On the click of the button it saves it to a preset file
-            File.WriteAllText("C:\\Notes.txt", textBox1.Text);
+        {
+            SaveFileDialog save_File = new SaveFileDialog();
+
+
+            if (save_File.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(save_File.FileName, textBox1.Text);
+
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Stream mystream;
-            OpenFileDialog openfile = new OpenFileDialog();
+            
+            OpenFileDialog open_File = new OpenFileDialog();
+            open_File.Title = "Open File";
 
-            if(openfile.ShowDialog() == DialogResult.OK)
+            if(open_File.ShowDialog() == DialogResult.OK)
             {
-                if((mystream = openfile.OpenFile()) != null)
-                {
-                    string strfilename = openfile.FileName;
-                    String filetext = File.ReadAllText(strfilename);
-                    textBox1.Text = filetext;
-                }
+                StreamReader mystream = new StreamReader(File.OpenRead(open_File.FileName));
+                textBox1.Text = mystream.ReadToEnd();
+                mystream.Close();
+                
             }
         }
 
-        /*
-        private void Save_As_Click(object sender, EventArgs e)
-        {
 
-        }
-        */
+
     }
 }
